@@ -1,9 +1,25 @@
-from flask import Flask
+from flask import Flask , request , jsonify
+import pickle as pkl
+
 app = Flask(__name__)
+
+clf = pkl.load(open('model/model.pkl','rb'))
 
 @app.route('/')
 def hello_world():
-    return 'Hello, Worl'
+    return 'Hello, World!'
+
+
+@app.route('/get_sentiment', methods=['Post'])
+def get_sentiment():
+    x = request.get_json(force = True)
+    text = x['Review']
+
+    sent = clf.predict(text)
+    sent = sent[0]
+
+    return jsonify(result = str(sent))
+
 
 
 if __name__ == "__main__":
